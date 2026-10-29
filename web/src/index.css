@@ -1,0 +1,7 @@
+/* Excalidraw fills its parent, so every ancestor needs a real height. */
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}

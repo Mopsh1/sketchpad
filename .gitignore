@@ -1,0 +1,15 @@
+# Xcode
+xcuserdata/
+*.xcuserstate
+DerivedData/
+build/
+*.xcscmblueprint
+.swiftpm/
+
+# Web layer (rebuilt by `make web`)
+web/node_modules/
+web/dist/
+web/public/fonts/
+
+# macOS
+.DS_Store
