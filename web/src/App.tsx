@@ -1,7 +1,7 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { Excalidraw, MainMenu, THEME } from "@excalidraw/excalidraw";
 import type { ExcalidrawInitialDataState } from "@excalidraw/excalidraw/types";
-import { attach, firstScene, onSceneReload, sceneChanged } from "./bridge";
+import { attach, firstScene, linkOpened, onSceneReload, sceneChanged } from "./bridge";
 
 const UI_OPTIONS = {
   canvasActions: {
@@ -32,6 +32,7 @@ export default function App() {
       initialData={board.initialData}
       excalidrawAPI={attach}
       onChange={sceneChanged}
+      onLinkOpen={linkOpened}
       langCode="zh-TW"
       theme={dark ? THEME.DARK : THEME.LIGHT}
       UIOptions={UI_OPTIONS}

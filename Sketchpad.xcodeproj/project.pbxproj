@@ -8,12 +8,25 @@
 
 /* Begin PBXBuildFile section */
 		014CFF24BCFBA3637A3CF605 /* SketchpadApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C43E4564781061F22876585D /* SketchpadApp.swift */; };
+		08AE8D7BBCDAD1F896EE67B2 /* BoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2E0EA3461D82BA85582B0BD /* BoardView.swift */; };
+		0CF5ED2513F79D95233B36B6 /* QuoteTextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAA7100BEE106D9FFC9575E1 /* QuoteTextTests.swift */; };
+		1ABFC442DD404C2B62F76003 /* BoardWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62A8CBAD4B374E368BD19609 /* BoardWebView.swift */; };
+		298E8485BB3E54F808E749C0 /* PDFReferenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3804C3B3F72798AA9DBDA96C /* PDFReferenceTests.swift */; };
+		4B028A8583B57CD918E19E23 /* QuoteText.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD43EE50CFBA23ACB923AA00 /* QuoteText.swift */; };
 		5D7EBAA4A3220E98F28E4145 /* WebAssetSchemeHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC05DA2EA54E417D9560BBDB /* WebAssetSchemeHandlerTests.swift */; };
 		6D80F1879CA9E57AD1F6E3AF /* WebAssetSchemeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5421562EBBDCF00A98755392 /* WebAssetSchemeHandler.swift */; };
+		6DCC7CE8A00EBB08EEAAD9BC /* SceneCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA570D87DF015C92ED12FFD /* SceneCards.swift */; };
+		7E8F7073774FDBDBC6A29BA1 /* SceneCardsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3A99DB72E34C20553B9BFA8 /* SceneCardsTests.swift */; };
+		899C3B02CC69F51C3C09E53C /* BoardSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD50E0A04A84E273F49A5E /* BoardSession.swift */; };
+		A00F4538577A0F97B423322E /* PDFReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C6F66536F2A661CD346FC1 /* PDFReference.swift */; };
+		C2C7899F895A2C6043E825C1 /* PDFRendering.swift in Sources */ = {isa = PBXBuildFile; fileRef = 081238C0015CC065C91AF882 /* PDFRendering.swift */; };
 		C6ABC375FA1C7BB4A1FC4595 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9FCF484FC7D4907F75115F8D /* Assets.xcassets */; };
 		D2C246BCCE743088AF863767 /* dist in Resources */ = {isa = PBXBuildFile; fileRef = 441FFB1A84B2556D8B7F8066 /* dist */; };
 		D7A68725DE6E2FA7A0D5E170 /* SketchpadDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 566AE5BE910BB1BE050B61C5 /* SketchpadDocument.swift */; };
+		DA39E74A3A0A8FA551D55F67 /* RegionSelectOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3493FAFEE6E499E62D615E9A /* RegionSelectOverlay.swift */; };
+		DD279F4E8375362E53BC79AC /* PDFReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8E725F4997811B181802776 /* PDFReaderView.swift */; };
 		E53CC37A4E56B79482D7DF06 /* CanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AF9CA4D0417B10AB050A75C /* CanvasView.swift */; };
+		E750A6F2079ADD6A7C36E2A7 /* PDFRenderingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F11CDA36BB8C20404E30965 /* PDFRenderingTests.swift */; };
 		EAE56974D92F92F2D7D2F44F /* SketchpadDocumentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C022FD39BE7F8A1E0F11BA8 /* SketchpadDocumentTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -29,14 +42,27 @@
 
 /* Begin PBXFileReference section */
 		04AF8DE57C88945B96C97F14 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		081238C0015CC065C91AF882 /* PDFRendering.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFRendering.swift; sourceTree = "<group>"; };
+		0ACD50E0A04A84E273F49A5E /* BoardSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardSession.swift; sourceTree = "<group>"; };
+		3493FAFEE6E499E62D615E9A /* RegionSelectOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionSelectOverlay.swift; sourceTree = "<group>"; };
+		3804C3B3F72798AA9DBDA96C /* PDFReferenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFReferenceTests.swift; sourceTree = "<group>"; };
 		441FFB1A84B2556D8B7F8066 /* dist */ = {isa = PBXFileReference; lastKnownFileType = folder; name = dist; path = web/dist; sourceTree = SOURCE_ROOT; };
 		4C022FD39BE7F8A1E0F11BA8 /* SketchpadDocumentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchpadDocumentTests.swift; sourceTree = "<group>"; };
 		5421562EBBDCF00A98755392 /* WebAssetSchemeHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebAssetSchemeHandler.swift; sourceTree = "<group>"; };
 		566AE5BE910BB1BE050B61C5 /* SketchpadDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchpadDocument.swift; sourceTree = "<group>"; };
+		62A8CBAD4B374E368BD19609 /* BoardWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardWebView.swift; sourceTree = "<group>"; };
 		74A1C02BC436487CB30DCB62 /* Sketchpad.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sketchpad.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		79C6F66536F2A661CD346FC1 /* PDFReference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFReference.swift; sourceTree = "<group>"; };
 		8AF9CA4D0417B10AB050A75C /* CanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasView.swift; sourceTree = "<group>"; };
+		9F11CDA36BB8C20404E30965 /* PDFRenderingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFRenderingTests.swift; sourceTree = "<group>"; };
 		9FCF484FC7D4907F75115F8D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A2E0EA3461D82BA85582B0BD /* BoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardView.swift; sourceTree = "<group>"; };
+		A3A99DB72E34C20553B9BFA8 /* SceneCardsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneCardsTests.swift; sourceTree = "<group>"; };
+		AAA570D87DF015C92ED12FFD /* SceneCards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneCards.swift; sourceTree = "<group>"; };
+		BAA7100BEE106D9FFC9575E1 /* QuoteTextTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteTextTests.swift; sourceTree = "<group>"; };
+		BD43EE50CFBA23ACB923AA00 /* QuoteText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteText.swift; sourceTree = "<group>"; };
 		C43E4564781061F22876585D /* SketchpadApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchpadApp.swift; sourceTree = "<group>"; };
+		C8E725F4997811B181802776 /* PDFReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFReaderView.swift; sourceTree = "<group>"; };
 		DC05DA2EA54E417D9560BBDB /* WebAssetSchemeHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebAssetSchemeHandlerTests.swift; sourceTree = "<group>"; };
 		ECEC2431C4EB89695CA7EDF3 /* SketchpadTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SketchpadTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -64,8 +90,17 @@
 			isa = PBXGroup;
 			children = (
 				9FCF484FC7D4907F75115F8D /* Assets.xcassets */,
+				0ACD50E0A04A84E273F49A5E /* BoardSession.swift */,
+				A2E0EA3461D82BA85582B0BD /* BoardView.swift */,
+				62A8CBAD4B374E368BD19609 /* BoardWebView.swift */,
 				8AF9CA4D0417B10AB050A75C /* CanvasView.swift */,
 				04AF8DE57C88945B96C97F14 /* Info.plist */,
+				C8E725F4997811B181802776 /* PDFReaderView.swift */,
+				79C6F66536F2A661CD346FC1 /* PDFReference.swift */,
+				081238C0015CC065C91AF882 /* PDFRendering.swift */,
+				BD43EE50CFBA23ACB923AA00 /* QuoteText.swift */,
+				3493FAFEE6E499E62D615E9A /* RegionSelectOverlay.swift */,
+				AAA570D87DF015C92ED12FFD /* SceneCards.swift */,
 				C43E4564781061F22876585D /* SketchpadApp.swift */,
 				566AE5BE910BB1BE050B61C5 /* SketchpadDocument.swift */,
 				5421562EBBDCF00A98755392 /* WebAssetSchemeHandler.swift */,
@@ -76,6 +111,10 @@
 		B7E5FB5B0533DDD99B5360E4 /* SketchpadTests */ = {
 			isa = PBXGroup;
 			children = (
+				3804C3B3F72798AA9DBDA96C /* PDFReferenceTests.swift */,
+				9F11CDA36BB8C20404E30965 /* PDFRenderingTests.swift */,
+				BAA7100BEE106D9FFC9575E1 /* QuoteTextTests.swift */,
+				A3A99DB72E34C20553B9BFA8 /* SceneCardsTests.swift */,
 				4C022FD39BE7F8A1E0F11BA8 /* SketchpadDocumentTests.swift */,
 				DC05DA2EA54E417D9560BBDB /* WebAssetSchemeHandlerTests.swift */,
 			);
@@ -186,7 +225,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				899C3B02CC69F51C3C09E53C /* BoardSession.swift in Sources */,
+				08AE8D7BBCDAD1F896EE67B2 /* BoardView.swift in Sources */,
+				1ABFC442DD404C2B62F76003 /* BoardWebView.swift in Sources */,
 				E53CC37A4E56B79482D7DF06 /* CanvasView.swift in Sources */,
+				DD279F4E8375362E53BC79AC /* PDFReaderView.swift in Sources */,
+				A00F4538577A0F97B423322E /* PDFReference.swift in Sources */,
+				C2C7899F895A2C6043E825C1 /* PDFRendering.swift in Sources */,
+				4B028A8583B57CD918E19E23 /* QuoteText.swift in Sources */,
+				DA39E74A3A0A8FA551D55F67 /* RegionSelectOverlay.swift in Sources */,
+				6DCC7CE8A00EBB08EEAAD9BC /* SceneCards.swift in Sources */,
 				014CFF24BCFBA3637A3CF605 /* SketchpadApp.swift in Sources */,
 				D7A68725DE6E2FA7A0D5E170 /* SketchpadDocument.swift in Sources */,
 				6D80F1879CA9E57AD1F6E3AF /* WebAssetSchemeHandler.swift in Sources */,
@@ -197,6 +245,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				298E8485BB3E54F808E749C0 /* PDFReferenceTests.swift in Sources */,
+				E750A6F2079ADD6A7C36E2A7 /* PDFRenderingTests.swift in Sources */,
+				0CF5ED2513F79D95233B36B6 /* QuoteTextTests.swift in Sources */,
+				7E8F7073774FDBDBC6A29BA1 /* SceneCardsTests.swift in Sources */,
 				EAE56974D92F92F2D7D2F44F /* SketchpadDocumentTests.swift in Sources */,
 				5D7EBAA4A3220E98F28E4145 /* WebAssetSchemeHandlerTests.swift in Sources */,
 			);

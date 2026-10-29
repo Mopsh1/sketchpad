@@ -6,20 +6,38 @@
 //
 // Scenes reach Excalidraw as `initialData` (see App.tsx), never through `updateScene`: only scene
 // initialization loads the fonts the scene's text uses, so `updateScene` leaves text in a fallback font.
+// Adding cards to the current scene is different: cards.ts loads their fonts first, then appends them
+// with `updateScene`, which keeps Excalidraw's undo history.
+//
+// PDF reading (Sketchpad/BoardSession.swift):
+// - Swift → page: `insertCard(spec)` adds a card and returns its element id (null while a load is in
+//   progress); `reveal(id)` scrolls to an element and selects it; `relinkPDF(pdfId, pdf)` points one
+//   PDF's cards at a moved file.
+// - Page → Swift: clicking a card's link posts "openPDF" with the card data; any other link posts
+//   "openLink", because Excalidraw's own window.open would reach Swift only as about:blank.
 //
 // In a normal browser (`npm run dev`) there is no message handler, so the page just runs standalone.
-import { loadFromBlob, serializeAsJSON } from "@excalidraw/excalidraw";
+import { isElementLink, loadFromBlob, serializeAsJSON } from "@excalidraw/excalidraw";
+import type { NonDeletedExcalidrawElement } from "@excalidraw/excalidraw/element/types";
 import type { AppState, ExcalidrawImperativeAPI, ExcalidrawInitialDataState } from "@excalidraw/excalidraw/types";
+import { addCard, type CardSpec, prepareCard, relinkPDF as relinkCards, revealElement } from "./cards";
 
 type NativeMessage =
   | { type: "ready"; isSecureContext: boolean; hasSubtleCrypto: boolean; origin: string }
   | { type: "change"; scene: string }
+  | { type: "openPDF"; elementId: string; card: unknown }
+  | { type: "openLink"; url: string }
   | { type: "log"; level: "info" | "error"; message: string };
 
 declare global {
   interface Window {
     webkit?: { messageHandlers?: Record<string, { postMessage(message: unknown): void }> };
-    sketchpad?: { load(scene: string): Promise<void> };
+    sketchpad?: {
+      load(scene: string): Promise<void>;
+      insertCard(spec: CardSpec): Promise<string | null>;
+      reveal(id: string): boolean;
+      relinkPDF(pdfId: string, pdf: unknown): number;
+    };
   }
 }
 
@@ -102,7 +120,51 @@ async function load(scene: string) {
   reloadListener?.({ ...data, appState: { ...data.appState, ...view } });
 }
 
-window.sketchpad = { load };
+async function insertCard(spec: CardSpec): Promise<string | null> {
+  if (!api || baseline === null) return null;
+  const thisLoad = loadCount;
+  const prepared = await prepareCard(spec);
+  // A new scene arrived while the fonts loaded; the card was meant for the old one.
+  if (!api || baseline === null || thisLoad !== loadCount) return null;
+  const id = addCard(api, spec, prepared);
+  // Report it now rather than after the debounce, which the scroll animation that may follow keeps
+  // restarting; closing the window right after adding a card must not lose it.
+  sync();
+  return id;
+}
+
+function reveal(id: string) {
+  return api ? revealElement(api, id) : false;
+}
+
+function relinkPDF(pdfId: string, pdf: unknown) {
+  if (!api || baseline === null) return 0;
+  const changed = relinkCards(api, pdfId, pdf);
+  sync();
+  return changed;
+}
+
+/** Excalidraw's `onLinkOpen`: in the app, every link is handled here or by Swift. */
+export function linkOpened(element: NonDeletedExcalidrawElement, event: CustomEvent<unknown>) {
+  // A plain browser opens links itself.
+  if (!native) return;
+  event.preventDefault();
+  const link = element.link ?? "";
+  // "Link to element" points inside this board; following it would reload the page.
+  if (isElementLink(link)) {
+    const id = new URL(link).searchParams.get("element");
+    if (id) reveal(id);
+    return;
+  }
+  const card = element.customData?.sketchpad;
+  if (card) {
+    post({ type: "openPDF", elementId: element.id, card });
+  } else if (link) {
+    post({ type: "openLink", url: link });
+  }
+}
+
+window.sketchpad = { load, insertCard, reveal, relinkPDF };
 
 window.addEventListener("error", (event) => {
   post({ type: "log", level: "error", message: `${event.message} (${event.filename}:${event.lineno})` });
