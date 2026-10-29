@@ -9,6 +9,8 @@ private let logger = Logger(subsystem: "com.mopshi.Sketchpad", category: "canvas
 struct CanvasView: NSViewRepresentable {
     @Binding var document: SketchpadDocument
     let session: BoardSession
+    /// A CanvasPattern raw value.
+    let pattern: String
 
     func makeCoordinator() -> CanvasCoordinator {
         CanvasCoordinator(document: $document, session: session)
@@ -21,6 +23,7 @@ struct CanvasView: NSViewRepresentable {
     func updateNSView(_ webView: WKWebView, context: Context) {
         context.coordinator.document = $document
         context.coordinator.show(document.scene)
+        context.coordinator.setPattern(pattern)
         session.sceneDidChange(document.scene)
     }
 }
@@ -32,20 +35,37 @@ final class CanvasCoordinator: NSObject {
     private weak var webView: WKWebView?
     private var isPageReady = false
     /// The scene the page currently shows. Lets `show` skip the page's own edits (already on screen)
-    /// and push only changes made on this side, such as File ▸ Revert or Edit ▸ Undo.
+    /// and push only changes made on this side, such as File ▸ Revert To.
     private var sceneInPage: String?
     /// Pushes the page has not finished loading. A "change" arriving meanwhile was posted before the
     /// page received the push, so it describes the board being replaced.
     private var pushesInFlight = 0
+    nonisolated(unsafe) private var accentObserver: (any NSObjectProtocol)?
+    private var pattern = CanvasPattern.none.rawValue
 
     init(document: Binding<SketchpadDocument>, session: BoardSession) {
         self.document = document
         self.session = session
         super.init()
         session.canvas = self
+        accentObserver = NotificationCenter.default.addObserver(
+            forName: NSColor.systemColorsDidChangeNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated { self?.sendAccent() }
+        }
+    }
+
+    deinit {
+        if let accentObserver { NotificationCenter.default.removeObserver(accentObserver) }
     }
 
     var window: NSWindow? { webView?.window }
+
+    /// Whether a view is the canvas or inside it.
+    func contains(_ view: NSView) -> Bool {
+        guard let webView else { return false }
+        return view.isDescendant(of: webView)
+    }
 
     func makeWebView() -> WKWebView {
         let configuration = WKWebViewConfiguration()
@@ -120,6 +140,64 @@ final class CanvasCoordinator: NSObject {
             logger.error("Relinking a PDF failed: \(error.localizedDescription, privacy: .public)")
         }
     }
+
+    /// Runs a toolbar or menu command on the page (web/src/commands.ts). Beeps when it did not apply,
+    /// such as undo with nothing to undo or zooming in past the limit.
+    func run(_ command: CanvasCommand) async {
+        guard isPageReady, let webView else { return NSSound.beep() }
+        do {
+            let applied = try await webView.callAsyncJavaScript(
+                "return window.sketchpad.command(name, arg)",
+                arguments: ["name": command.name, "arg": command.argument ?? NSNull()], contentWorld: .page)
+            if applied as? Bool != true { NSSound.beep() }
+        } catch {
+            logger.error("Command \(command.name, privacy: .public) failed: \(error.localizedDescription, privacy: .public)")
+        }
+    }
+
+    /// Passes the system accent color to the page (web/src/native.css), resolved for light and dark.
+    private func sendAccent() {
+        guard isPageReady, let webView else { return }
+        let light = Self.hex(of: .controlAccentColor, in: .aqua)
+        let dark = Self.hex(of: .controlAccentColor, in: .darkAqua)
+        Task {
+            do {
+                _ = try await webView.callAsyncJavaScript("window.sketchpad.setAccent(light, dark); return true",
+                                                          arguments: ["light": light, "dark": dark], contentWorld: .page)
+            } catch {
+                logger.error("Passing the accent color failed: \(error.localizedDescription, privacy: .public)")
+            }
+        }
+    }
+
+    func setPattern(_ pattern: String) {
+        guard pattern != self.pattern else { return }
+        self.pattern = pattern
+        sendPattern()
+    }
+
+    private func sendPattern() {
+        guard isPageReady, let webView else { return }
+        let pattern = pattern
+        Task {
+            do {
+                _ = try await webView.callAsyncJavaScript("window.sketchpad.setPattern(pattern); return true",
+                                                          arguments: ["pattern": pattern], contentWorld: .page)
+            } catch {
+                logger.error("Passing the background pattern failed: \(error.localizedDescription, privacy: .public)")
+            }
+        }
+    }
+
+    private static func hex(of color: NSColor, in appearance: NSAppearance.Name) -> String {
+        var hex = "#6965db"
+        NSAppearance(named: appearance)?.performAsCurrentDrawingAppearance {
+            guard let rgb = color.usingColorSpace(.sRGB) else { return }
+            let byte = { (value: CGFloat) in Int((min(max(value, 0), 1) * 255).rounded()) }
+            hex = String(format: "#%02x%02x%02x", byte(rgb.redComponent), byte(rgb.greenComponent), byte(rgb.blueComponent))
+        }
+        return hex
+    }
 }
 
 extension CanvasCoordinator: WKScriptMessageHandler {
@@ -134,6 +212,8 @@ extension CanvasCoordinator: WKScriptMessageHandler {
             logger.notice("Page ready: origin \(origin, privacy: .public), secure context \(secure), subtle crypto \(subtle)")
             isPageReady = true
             sceneInPage = nil
+            sendAccent()
+            sendPattern()
             show(document.wrappedValue.scene)
         case "change":
             guard let scene = body["scene"] as? String else { return }
@@ -146,6 +226,9 @@ extension CanvasCoordinator: WKScriptMessageHandler {
             guard scene != document.wrappedValue.scene else { return }
             document.wrappedValue.scene = scene
             logger.info("Scene changed (\(scene.utf8.count) bytes)")
+        case "ui":
+            guard let state = body["state"].flatMap({ CanvasUI($0) }) else { return }
+            session.canvasUI = state
         case "openPDF":
             guard let card = body["card"].flatMap(CardData.decode) else {
                 logger.error("A card link carried data this version cannot read")

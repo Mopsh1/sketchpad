@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- A box, a circle and the arrow joining them. -->
+  <g fill="none" stroke="#24214d" stroke-width="36" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="276" y="297" width="246" height="195" rx="31"/>
+    <ellipse cx="625" cy="676" rx="113" ry="102"/>
+    <path d="M430 512 C430 573 481 614 543 614"/>
+    <path d="M481 573 L548 614 L491 660"/>
+  </g>
+</svg>

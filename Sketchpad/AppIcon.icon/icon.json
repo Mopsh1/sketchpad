@@ -1,0 +1,36 @@
+{
+  "fill": {
+    "automatic-gradient": "extended-srgb:0.45000,0.43000,0.88000,1.00000"
+  },
+  "groups": [
+    {
+      "layers": [
+        {
+          "image-name": "ink.svg",
+          "name": "ink",
+          "fill-specializations": [
+            {
+              "appearance": "dark",
+              "value": {
+                "solid": "extended-srgb:0.96000,0.96000,1.00000,1.00000"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "layers": [
+        {
+          "image-name": "sheet.svg",
+          "name": "sheet"
+        }
+      ]
+    }
+  ],
+  "supported-platforms": {
+    "squares": [
+      "macOS"
+    ]
+  }
+}

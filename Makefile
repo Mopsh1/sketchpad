@@ -7,7 +7,7 @@
 #   make run       build, then launch the app
 #   make test      run the unit tests
 #   make install   copy the built app into /Applications
-#   make icon      regenerate the app icon PNGs from Scripts/make-icon.swift
+#   make icon      render previews of the app icon (Sketchpad/AppIcon.icon) into build/icon-preview
 
 APP      := build/Build/Products/Release/Sketchpad.app
 XCODEGEN := xcodegen
@@ -49,8 +49,17 @@ install: build
 	cp -R "$(APP)" /Applications/
 	@echo "Installed /Applications/Sketchpad.app"
 
+ICTOOL := /Applications/Xcode.app/Contents/Applications/Icon Composer.app/Contents/Executables/ictool
+
+# The icon is an Icon Composer document; edit it in Icon Composer (in Xcode.app) or by hand, then
+# check every appearance here.
 icon:
-	swift Scripts/make-icon.swift Sketchpad/Assets.xcassets/AppIcon.appiconset
+	mkdir -p build/icon-preview
+	for r in Default Dark TintedLight TintedDark ClearLight ClearDark; do \
+		"$(ICTOOL)" Sketchpad/AppIcon.icon --export-image --platform macOS --rendition $$r \
+			--width 512 --height 512 --scale 1 --output-file build/icon-preview/$$r.png > /dev/null; \
+	done
+	@echo "Wrote build/icon-preview/*.png"
 
 clean:
 	rm -rf build web/dist web/public/fonts

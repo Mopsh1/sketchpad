@@ -30,8 +30,11 @@ export type CardSpec = {
 export type PreparedCard = { fileId: FileId | null };
 
 const FONT_SIZE = 16;
-// What Excalidraw's getFontString gives for Excalifont (not exported): its CJK and emoji fallbacks.
-const FONT_FAMILIES = "Excalifont, Xiaolai, Segoe UI Emoji";
+// Cards use the normal font and smooth lines, like new drawings (bridge.ts).
+const FONT = FONT_FAMILY.Nunito;
+// What Excalidraw's getFontString gives for Nunito (not exported): only an emoji fallback, so Chinese
+// is drawn in the system font.
+const FONT_FAMILIES = "Nunito, Segoe UI Emoji";
 const FONT_TIMEOUT_MS = 3000;
 const QUOTE_WIDTH = 320;
 const QUOTE_BACKGROUND = "#fff9db";
@@ -69,13 +72,14 @@ export function addCard(api: ExcalidrawImperativeAPI, spec: CardSpec, prepared: 
       width: QUOTE_WIDTH,
       backgroundColor: QUOTE_BACKGROUND,
       fillStyle: "solid",
+      roughness: 0,
       roundness: { type: ROUNDNESS.ADAPTIVE_RADIUS },
       link: spec.link,
       customData,
       label: {
         text: spec.quote,
         fontSize: FONT_SIZE,
-        fontFamily: FONT_FAMILY.Excalifont,
+        fontFamily: FONT,
         textAlign: "left",
         verticalAlign: "top",
       },
@@ -109,7 +113,7 @@ export function addCard(api: ExcalidrawImperativeAPI, spec: CardSpec, prepared: 
         y: spec.image.height + CAPTION_GAP,
         text: spec.caption,
         fontSize: FONT_SIZE,
-        fontFamily: FONT_FAMILY.Excalifont,
+        fontFamily: FONT,
         groupIds,
       });
     }

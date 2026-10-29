@@ -5,8 +5,9 @@ import os
 
 private let logger = Logger(subsystem: "com.mopshi.Sketchpad", category: "reader")
 
-/// One board window's PDF reading: what the reader panel shows, and the link between the reader and
-/// the board (CanvasCoordinator) for adding cards and for jumping between a card and its place in the PDF.
+/// One board window's state beyond the document: what the window toolbar shows about the canvas, and
+/// PDF reading — what the reader panel shows, and the link between the reader and the board
+/// (CanvasCoordinator) for adding cards and for jumping between a card and its place in the PDF.
 ///
 /// The board is the only record of highlights. The reader draws the quote and region cards it finds in
 /// the scene, so deleting or undoing a card removes its highlight; nothing is written into the PDF.
@@ -45,6 +46,10 @@ final class BoardSession {
     private(set) var highlights: [SceneCard] = []
     private(set) var pageIndicator = ""
     var hasTextSelection = false
+    /// The canvas as the window toolbar and menus show it (CanvasToolbar.swift), reported by the page.
+    var canvasUI = CanvasUI()
+    /// Set by Edit ▸ Find while the reader has focus; the reader then focuses its search field.
+    private(set) var searchRequest: UUID?
 
     @ObservationIgnored weak var canvas: CanvasCoordinator?
     /// The reader's PDFView, set while the reader shows one.
@@ -54,6 +59,40 @@ final class BoardSession {
     @ObservationIgnored var handledDestination: UUID?
     @ObservationIgnored private var scene = ""
     @ObservationIgnored private var highlightRefresh: Task<Void, Never>?
+
+    // MARK: Toolbar and menus → canvas
+
+    func perform(_ command: CanvasCommand) {
+        guard let canvas else { return NSSound.beep() }
+        Task { await canvas.run(command) }
+    }
+
+    /// View ▸ zoom and Edit ▸ Find act on the PDF while the reader has keyboard focus, on the board
+    /// otherwise, like the same keys in the canvas.
+    func zoomOrFind(_ command: CanvasCommand) {
+        guard readerHasFocus, let pdfView else { return perform(command) }
+        switch command {
+        case .zoomIn: pdfView.zoomIn(nil)
+        case .zoomOut: pdfView.zoomOut(nil)
+        case .resetZoom:
+            pdfView.autoScales = false
+            pdfView.scaleFactor = 1
+        case .zoomToFit: pdfView.autoScales = true
+        case .search: searchRequest = UUID()
+        default: perform(command)
+        }
+    }
+
+    /// Keyboard focus is in the reader: its PDF, or its search field (the window's only text field
+    /// outside the canvas).
+    private var readerHasFocus: Bool {
+        guard isReaderShown, let pdfView, var view = pdfView.window?.firstResponder as? NSView else { return false }
+        if let editor = view as? NSTextView, editor.isFieldEditor, let field = editor.delegate as? NSView {
+            view = field
+        }
+        if view.isDescendant(of: pdfView) { return true }
+        return view is NSTextField && canvas?.contains(view) != true
+    }
 
     // MARK: Board → reader
 
@@ -150,6 +189,8 @@ final class BoardSession {
     /// 檔案 ▸ 插入 PDF⋯
     func chooseAndInsertPDF() async {
         guard let window = canvas?.window else { return }
+        // View mode is read-only; the page would refuse the card anyway (bridge.ts).
+        guard !canvasUI.viewMode else { return NSSound.beep() }
         let panel = NSOpenPanel()
         panel.allowedContentTypes = [.pdf]
         panel.allowsMultipleSelection = true

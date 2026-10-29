@@ -1,0 +1,232 @@
+/*
+ * Makes Excalidraw's UI fit a macOS app (loaded after the package's own CSS, see main.tsx).
+ *
+ * The window toolbar and menus replace Excalidraw's toolbar, main menu, library button, zoom and undo
+ * buttons and help button (Sketchpad/CanvasToolbar.swift). What stays (the properties panel, context
+ * menu, dialogs, sidebar) is restyled as macOS glass in the system font and accent color.
+ *
+ * Class names are from @excalidraw/excalidraw 0.18.1; recheck them when upgrading.
+ * Dialogs are portaled to <body> as their own `.excalidraw` element, so tokens set on `.excalidraw`
+ * reach them too.
+ */
+
+/* --- Replaced by the window toolbar ---------------------------------------------------------- */
+
+/* Hidden, not removed: Excalidraw measures the toolbar to pad zoom-to-fit. Its hint line (what to do
+   with the current tool) goes too; the window toolbar's tooltips say the same (CanvasToolbar.swift). */
+.excalidraw .App-toolbar-container {
+  visibility: hidden;
+}
+/* Its wrappers stay visible and take the pointer, which would block the canvas under the toolbar. */
+.excalidraw .shapes-section,
+.excalidraw .shapes-section * {
+  pointer-events: none !important;
+}
+
+/* The main menu (its items are in the menu bar). Its wrapper is the first item of the left column,
+   above the properties panel, so the panel moves up into its place. */
+.excalidraw .App-menu_top__left > :first-child {
+  display: none;
+}
+
+/* The library button, the help button. */
+.excalidraw .layer-ui__wrapper__top-right .sidebar-trigger__label-element,
+.excalidraw .help-icon {
+  display: none;
+}
+
+/* Zoom and undo. CSS leaves them mounted, and the menu commands click these buttons
+   (web/src/commands.ts); `visibility` would not do, since Excalidraw makes them visible again. */
+.excalidraw .layer-ui__wrapper__footer-left {
+  display: none;
+}
+
+/* --- Tokens ---------------------------------------------------------------------------------- */
+
+/* --sketchpad-accent(-dark) come from Swift (NSColor.controlAccentColor); the fallbacks are
+   Excalidraw's own violet, which is also the app's accent color. */
+.excalidraw,
+.excalidraw-tooltip {
+  --ui-font: -apple-system, BlinkMacSystemFont, "PingFang TC", "Helvetica Neue", sans-serif;
+}
+
+.excalidraw {
+  --border-radius-md: 7px;
+  --border-radius-lg: 14px;
+
+  --sketchpad-glass: rgb(250 250 250 / 0.78);
+  --sketchpad-glass-border: rgb(0 0 0 / 0.1);
+  --sketchpad-menu: rgb(246 246 246 / 0.86);
+  --sketchpad-separator: rgb(0 0 0 / 0.1);
+
+  --island-bg-color: var(--sketchpad-glass);
+  --popup-bg-color: var(--sketchpad-menu);
+  --popup-secondary-bg-color: var(--sketchpad-menu);
+  --sidebar-bg-color: var(--sketchpad-glass);
+  --sidebar-border-color: var(--sketchpad-separator);
+  --shadow-island: 0 0 0 0.5px var(--sketchpad-glass-border), 0 6px 20px rgb(0 0 0 / 0.1);
+  --sidebar-shadow: none;
+  --modal-shadow: 0 0 0 0.5px var(--sketchpad-glass-border), 0 20px 50px rgb(0 0 0 / 0.22);
+
+  --color-primary: var(--sketchpad-accent, #6965db);
+  --color-primary-darker: color-mix(in srgb, var(--color-primary), black 10%);
+  --color-primary-darkest: color-mix(in srgb, var(--color-primary), black 25%);
+  --color-primary-hover: color-mix(in srgb, var(--color-primary), black 10%);
+  --color-primary-light: color-mix(in srgb, var(--color-primary), white 82%);
+  --color-primary-light-darker: color-mix(in srgb, var(--color-primary), white 72%);
+  --color-brand-hover: var(--color-primary-hover);
+  --color-brand-active: var(--color-primary-darkest);
+  --color-surface-primary-container: var(--color-primary-light);
+  /* Dark enough to read on the light tint for any accent, yellow included. */
+  --color-on-primary-container: color-mix(in srgb, var(--color-primary), black 50%);
+  --color-slider-track: var(--color-primary-light-darker);
+  --color-slider-thumb: var(--color-primary);
+  --select-highlight-color: var(--color-primary);
+  --focus-highlight-color: color-mix(in srgb, var(--color-primary), transparent 45%);
+  --link-color: var(--color-primary);
+
+  /* Neutral grays instead of Excalidraw's violet-tinted ones. */
+  --color-surface-high: rgb(0 0 0 / 0.07);
+  --color-surface-mid: rgb(0 0 0 / 0.04);
+  --color-surface-low: rgb(0 0 0 / 0.06);
+  --color-surface-lowest: #ffffff;
+  --color-on-surface: rgb(0 0 0 / 0.85);
+  --button-hover-bg: rgb(0 0 0 / 0.06);
+  --button-active-bg: rgb(0 0 0 / 0.1);
+}
+
+.excalidraw.theme--dark {
+  --sketchpad-glass: rgb(44 44 48 / 0.76);
+  --sketchpad-glass-border: rgb(255 255 255 / 0.12);
+  --sketchpad-menu: rgb(40 40 44 / 0.88);
+  --sketchpad-separator: rgb(255 255 255 / 0.12);
+
+  --island-bg-color: var(--sketchpad-glass);
+  --popup-bg-color: var(--sketchpad-menu);
+  --popup-secondary-bg-color: var(--sketchpad-menu);
+  --shadow-island: 0 0 0 0.5px var(--sketchpad-glass-border), 0 6px 20px rgb(0 0 0 / 0.35);
+  --modal-shadow: 0 0 0 0.5px var(--sketchpad-glass-border), 0 20px 50px rgb(0 0 0 / 0.5);
+
+  --color-primary: var(--sketchpad-accent-dark, #a8a5ff);
+  /* Excalidraw's dark theme makes "darker" shades lighter, so they still stand out on dark gray. */
+  --color-primary-darker: color-mix(in srgb, var(--color-primary), white 10%);
+  --color-primary-darkest: color-mix(in srgb, var(--color-primary), white 22%);
+  --color-primary-hover: color-mix(in srgb, var(--color-primary), white 10%);
+  --color-primary-light: color-mix(in srgb, var(--color-primary), black 62%);
+  --color-primary-light-darker: color-mix(in srgb, var(--color-primary), black 68%);
+  --color-on-primary-container: color-mix(in srgb, var(--color-primary), white 60%);
+  --color-slider-track: var(--color-primary-light-darker);
+  --color-slider-thumb: var(--color-primary);
+
+  --color-surface-high: rgb(255 255 255 / 0.1);
+  --color-surface-mid: rgb(255 255 255 / 0.06);
+  --color-surface-low: rgb(255 255 255 / 0.08);
+  --color-surface-lowest: #1e1e1e;
+  --color-on-surface: rgb(255 255 255 / 0.86);
+  --button-hover-bg: rgb(255 255 255 / 0.08);
+  --button-active-bg: rgb(255 255 255 / 0.14);
+}
+
+/* --- Glass surfaces -------------------------------------------------------------------------- */
+
+.excalidraw .Island,
+.excalidraw .sidebar,
+.excalidraw .dropdown-menu .dropdown-menu-container,
+.excalidraw .context-menu,
+.excalidraw .Modal__content,
+.excalidraw .popover > .Island {
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(28px) saturate(180%);
+}
+
+/* A panel inside a dialog sits on the dialog's glass already. */
+.excalidraw .Modal__content .Island {
+  background: transparent;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.excalidraw .Modal__content {
+  border: none;
+  border-radius: 18px;
+}
+
+.excalidraw .sidebar {
+  border-left: 0.5px solid var(--sketchpad-separator);
+}
+
+.excalidraw .App-menu__left {
+  font-size: 12px;
+}
+
+/* --- Context menu, as a macOS menu ----------------------------------------------------------- */
+
+.excalidraw .context-menu {
+  border: none;
+  border-radius: 10px;
+  padding: 5px;
+  background-color: var(--sketchpad-menu);
+  box-shadow:
+    0 0 0 0.5px var(--sketchpad-glass-border),
+    0 10px 30px rgb(0 0 0 / 0.2);
+  font-size: 13px;
+}
+
+.excalidraw .context-menu-item {
+  min-height: 22px;
+  padding: 2px 10px 2px 22px;
+  border-radius: 5px;
+}
+
+.excalidraw .context-menu-item:hover,
+.excalidraw .context-menu-item:hover.dangerous {
+  background-color: var(--color-primary);
+  color: #ffffff;
+}
+
+.excalidraw .context-menu-item:hover .context-menu-item__label,
+.excalidraw .context-menu-item:hover.dangerous .context-menu-item__label {
+  color: #ffffff;
+}
+
+.excalidraw .context-menu-item .context-menu-item__shortcut {
+  font-size: 13px;
+  opacity: 0.5;
+}
+
+.excalidraw .context-menu-item:hover .context-menu-item__shortcut {
+  opacity: 0.85;
+}
+
+.excalidraw .context-menu-item-separator {
+  margin: 5px 10px;
+  border: none;
+  border-top: 1px solid var(--sketchpad-separator);
+}
+
+/* --- Canvas background (background.ts) ------------------------------------------------------- */
+
+/* The layer under the transparent canvas that paints the background color and pattern. A stacking
+   context of its own, so z-index -1 keeps it under Excalidraw and above the page. */
+.sketchpad-board {
+  position: relative;
+  z-index: 0;
+  height: 100%;
+}
+
+.sketchpad-pattern {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  --sketchpad-dot: rgb(0 0 0 / 0.22);
+  --sketchpad-line: rgb(0 0 0 / 0.07);
+}
+
+/* Excalidraw's dark theme inverts the canvas; do the same to the layer under it. */
+@media (prefers-color-scheme: dark) {
+  .sketchpad-pattern {
+    filter: invert(93%) hue-rotate(180deg);
+  }
+}

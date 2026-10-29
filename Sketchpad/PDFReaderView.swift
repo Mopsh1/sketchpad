@@ -8,6 +8,7 @@ struct PDFReaderView: View {
     @State private var showsThumbnails = false
     @State private var showsOutline = false
     @State private var search = ReaderSearch()
+    @FocusState private var searchFocused: Bool
 
     var body: some View {
         Group {
@@ -41,6 +42,7 @@ struct PDFReaderView: View {
                     Text("點白板上 PDF 卡片的連結圖示來閱讀，或先插入一份 PDF。")
                 } actions: {
                     Button("插入 PDF⋯") { Task { await session.chooseAndInsertPDF() } }
+                        .disabled(session.canvasUI.viewMode)
                 }
             }
         }
@@ -50,6 +52,8 @@ struct PDFReaderView: View {
         .onChange(of: session.current.map { ObjectIdentifier($0.document) }) {
             search.reset(pdfView: session.pdfView)
         }
+        // Edit ▸ Find (⌘F) while the reader has focus.
+        .onChange(of: session.searchRequest) { searchFocused = true }
         .overlay(alignment: .topTrailing) {
             if session.current == nil {
                 iconButton("xmark", "關閉閱讀面板") { session.isReaderShown = false }
@@ -89,6 +93,7 @@ struct PDFReaderView: View {
             HStack(spacing: 4) {
                 TextField("搜尋", text: $search.query)
                     .textFieldStyle(.roundedBorder)
+                    .focused($searchFocused)
                     .onSubmit { search.submit(in: current.document, pdfView: session.pdfView) }
                 if search.hasSearched {
                     if search.results.isEmpty {
