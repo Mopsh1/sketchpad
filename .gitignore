@@ -13,3 +13,6 @@ web/public/fonts/
 
 # macOS
 .DS_Store
+
+# Local notes for coding agents (kept out of the public repo)
+CLAUDE.md

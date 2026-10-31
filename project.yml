@@ -11,7 +11,7 @@ settings:
     SWIFT_VERSION: "6.0"
     SWIFT_STRICT_CONCURRENCY: complete
     MACOSX_DEPLOYMENT_TARGET: "15.0"
-    # Personal app: sign to run locally, no sandbox (same as Snag and iShelf).
+    # Signed ad hoc so it runs on the Mac that builds it; no Apple developer account, no sandbox.
     CODE_SIGN_STYLE: Manual
     CODE_SIGN_IDENTITY: "-"
     DEVELOPMENT_TEAM: ""
@@ -41,7 +41,7 @@ targets:
         LSApplicationCategoryType: public.app-category.productivity
         LSMinimumSystemVersion: $(MACOSX_DEPLOYMENT_TARGET)
         NSHighResolutionCapable: true
-        NSHumanReadableCopyright: "Personal use only."
+        NSHumanReadableCopyright: "© 2026 Mopshi. MIT License."
         CFBundleDocumentTypes:
           - CFBundleTypeName: Excalidraw 白板
             CFBundleTypeRole: Editor
